@@ -9,11 +9,6 @@ export default new VueRouter({
             name:'vant',
             component:Vant
         },
-        {
-            path:'/1',
-            name:'vant1',
-            component:Vant1
-        }
     ]
 })
 

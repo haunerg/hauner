@@ -7,10 +7,10 @@ export default {
     * @author 郭梦娜
     * @date 2020-2-21
     **/
-    setMessage: function (type, message) {
+    setMessage: function ( message, type = 'error') {
         Vue.prototype.$message({
-            message: message,
-            type: type,
+            message,
+            type,
             duration: 5000,
             showClose: true,
         })

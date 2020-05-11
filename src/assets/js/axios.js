@@ -31,11 +31,11 @@ axios.interceptors.response.use((res) => {
         setTimeout(() => window.logout(), 1000)
         return Promise.reject({ message })
     } else {
-        commonUtil.setMessage('warning', message)
+        commonUtil.setMessage(message)
         return Promise.reject({ message, statusCode })
     }
 }, (error) => {
-    commonUtil.setMessage('warning', error.data.message)
+    commonUtil.setMessage(error.data.message)
 })
 
 export default axios

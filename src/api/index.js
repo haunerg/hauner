@@ -1,35 +1,53 @@
+// import { createAPI } from '../util';
+import { Request } from 'buriedPoint';
+let env = process.env.NODE_ENV
+let path = {
+    // dev
+    development:`192.168.10.142:8808`,
+    // 200
+    lan: `http://192.168.10.200:8005/`,
+    // 测试
+    pred: `https://dgateway.allhome.com.cn/tmemetting`,
+    // 线上
+    prod: `https://gateway.allhome.com.cn/tmemetting`,
+    //测试新增环境
+    dtest: `http://192.168.10.200:8005/exam`
+}
+const baseURL = path[env]
 
-// import { Request } from 'buriedPoint';
-import axios from 'axios'
-// 引入工具类--消息提示框
-import commonUtil from '@/assets/js/common_util.js';
+// export let cerateApi = createAPI(baseURL);
 
-axios.defaults.timeout = 60000
-axios.interceptors.request.use((config) => {
-	config.headers.token = window.token || 'aB/80UfOTOmkPw7MFgbe1ukb6TGaX7UfYMgj5rMrmKUI01p/I35J4V4nlIJjzoK3Mspk90fY+UqSXoB+DrXEf3Y2EyA+DewtioNDtfseFrGiiGm0jc/yg1hVBoyXzV9M3yNkqP4hBtmCpy0z5dcoDIemRDcQADaZFYCBDELhkGac9ACnZl5zX9IJqWJKhj+9neM5IrGNQATsFf6Xn37uL6NULCJm+0NgU5alEjAc6BOWa2U2WNeCYxItencARSO7TMaWzYDkyKgIwW77NyqmGHsMQCLYzEHHdWRAL3FA7BrvGQ18q2lLLLSlpipUcdoDpat8UXria8wPzvV+XWOH0Q==';
-	return config
-}, (error) => {
-	return Promise.reject(error)
-})
-axios.interceptors.response.use((res) => {
-    let { message, result, statusCode } = res.data
-    //  退出登录状态码
-    let logoutCodes = new Set([435001, 435011, 436050])
-    if (statusCode === 1000) {
-        //  更新全局token
-        let { pragma } = res.headers
-        if (pragma) window.token = pragma
-        //  返回数据
-        return result
-    } else if (logoutCodes.has(statusCode)) {
-        setTimeout(() => window.logout(), 1000)
-        return Promise.reject({ message })
-    } else {
-        commonUtil.setMessage('warning', message)
-        return Promise.reject({ message, statusCode })
+const request = new Request({
+    baseURL,
+    timeout: 600000,
+}, env === "prod" ? 'production' : env, 'yourWebAppName');
+window.token = window.token || "hkw5nkLhs4Wzh2SakqlRxp4D1hOHHAjhmUMrJ/C67swcpWZz+96cyl9n0znpxeyOqDZbGyhtnM5qHT/nkGWxAe/KGpFa1Y+fAZT8W5bT1V4gnH8QCNNgCcmZXUWXaONpVvAmdGfNrzQlj6o1f6iBZ5lB20aMsKEF8llJwCfRt6x1NWSFAnN9xQcUdW+xHPjGYk0zjdcdsVUxpx20vSkeq5KItq8a9yzbuUZoj2M6KaFI9P7DzJkzwM4KjNQO33iysLX72e+TuF17dO03OvZBHlBbRNO672d/UReUalFUzBiRHvAfMvenkvR/6XvimKbOihKPZST3HT7+eu3ES4h3aQ=="
+// 设置拦截器
+request.interceptors({
+    request: config => {
+        config.headers.token = window.token;
+        return config
+    },
+    response: res => {
+        let { message, result, statusCode } = res.data
+        //  退出登录状态码
+        let logoutCodes = new Set([435001, 435011, 436050])
+        if (statusCode === 1000) {
+            //  更新全局token
+            let { pragma } = res.headers
+            if (pragma) window.token = pragma
+            //  返回数据
+            return result
+        } else if (logoutCodes.has(statusCode)) {
+            setTimeout(() => window.logout(), 1000)
+            return Promise.reject({ message })
+            // return Promise.resolve()
+        } else {
+            return Promise.reject({ message, statusCode })
+        }
+    },
+    error: error => {
+        return error.data ? Promise.reject(error.data) : Promise.reject(error)
     }
-}, (error) => {
-    commonUtil.setMessage('warning', error.data.message)
 })
-
-export default axios
+export default request.axios;
