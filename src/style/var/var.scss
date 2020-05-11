@@ -1,0 +1,23 @@
+/* Color */
+$--color-primary: #1FB19E !default;
+$--color-white: #ffffff !default;
+$--color-black: #000000 !default;
+$--color-warning: #FF8B37 !default;
+$--color-danger: #EB4C44 !default;
+$--color-disabled: #F3F3F3 !default;
+
+/* Font-size */
+$--font-base-size: 14px !default;
+$--font-small-size: 12px !default;
+
+/* Font-color */
+$--font-color-primary: #5C5C5C !default;
+$--font-color-secondary: #999999 !default;
+$--font-color-disabled: #CCCCCC !default;
+
+/* border-color */
+$--border-color-base: #E2E2E2 !default;
+
+/* table-color */
+$--table-font-color: $--font-color-primary;
+$--table-checkbox-color: #ffc339 !default;
