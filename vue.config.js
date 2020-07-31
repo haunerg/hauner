@@ -1,18 +1,35 @@
-let pages = require('./.pages')
+const externals = require("./webpackMethod/externals");
+const plugins = require("./webpackMethod/plugins");
+const htmls = require("./webpackMethod/pages");
+const optimization = require("./webpackMethod/optimization");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
 module.exports = {
-    configureWebpack: {
-        externals: {
-            'vue': 'Vue',
-            'element-ui': 'ELEMENT',
-            "common": 'QjMethod'
-        }
+    configureWebpack: (config) => {
+        config.externals = externals;
+        config.plugins = [...config.plugins,...plugins];
+        config.optimization = optimization;
     },
-    pages,
+    pages:htmls,
     publicPath: './',           
     outputDir: 'dist',        
     devServer: {
         open: true,             
-        index: '/supplier_file.html'    
+        index: '/IndexPage.html'    
     },
-    productionSourceMap: false
+    productionSourceMap: false,
+    css: {
+        extract: true,
+        sourceMap: false,
+        modules: false,
+        requireModuleExtension: false,
+        loaderOptions: {
+            css: {
+                modules: {
+                    localIdentName: '[name]-[hash]'
+                },
+                localsConvention: 'camelCaseOnly'
+            }
+        }
+    }
 };
